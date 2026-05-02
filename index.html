@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Tashu!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #fae8ff 100%);
+            overflow-x: hidden;
+        }
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f97316;
+            opacity: 0;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        .nav-btn {
+            background: rgba(236, 72, 153, 0.1);
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(236, 72, 153, 0.2);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Audio Element -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_51c6e1c4e7.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Section 1: The Hero Intro -->
+    <div id="hero-section" class="text-center animate__animated animate__fadeIn">
+        <div class="relative inline-block mb-6">
+            <div class="w-48 h-48 md:w-64 md:h-64 rounded-full border-8 border-white shadow-2xl overflow-hidden animate__animated animate__pulse animate__infinite">
+                <!-- Matches "Tashu.jpeg" from your GitHub screenshot -->
+                <img src="Tashu.jpeg" 
+                     alt="Tashu" 
+                     class="w-full h-full object-cover"
+                     onerror="this.src='https://ui-avatars.com/api/?name=Tashu&background=ec4899&color=fff&size=512'">
+            </div>
+            <div class="absolute -bottom-4 -right-4 bg-yellow-400 p-3 rounded-full shadow-lg text-2xl">🎂</div>
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl cursive text-pink-600 mb-4">Happy Birthday, Tashu!</h1>
+        <p class="text-gray-600 text-lg mb-8 max-w-md mx-auto">Today is all about you! We've prepared a little something special to show you how much we love you.</p>
+        
+        <button onclick="startSurprise()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-10 rounded-full text-xl shadow-xl transform transition hover:scale-105 active:scale-95 animate__animated animate__bounceIn">
+            Open Your Surprise ✨
+        </button>
+    </div>
+
+    <!-- Section 2: The Sequential Messages with Navigation -->
+    <div id="message-container" class="hidden w-full max-w-2xl mx-auto relative group">
+        <div id="message-card" class="glass-card rounded-3xl p-8 md:p-12 text-center relative overflow-hidden min-h-[400px] flex flex-col justify-center">
+            
+            <!-- Navigation Buttons -->
+            <button onclick="prevFriend()" class="absolute left-2 top-1/2 -translate-y-1/2 nav-btn p-3 rounded-full text-pink-600 z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            <button onclick="nextFriend()" class="absolute right-2 top-1/2 -translate-y-1/2 nav-btn p-3 rounded-full text-pink-600 z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+
+            <div id="friend-image-container" class="mb-6 flex justify-center">
+                <img id="friend-image" src="" alt="Friend" class="w-32 h-32 md:w-40 md:h-40 rounded-2xl object-cover shadow-lg border-4 border-white transition-all duration-500">
+            </div>
+            <h3 id="friend-name" class="text-2xl font-semibold text-pink-600 mb-2"></h3>
+            <div class="h-px w-20 bg-pink-200 mx-auto mb-6"></div>
+            <p id="friend-wish" class="text-gray-700 text-lg md:text-xl leading-relaxed italic"></p>
+            
+            <div id="progress-indicator" class="mt-8 flex justify-center gap-2">
+                <!-- Progress dots will be generated here -->
+            </div>
+            
+            <p class="text-xs text-pink-300 mt-4 uppercase tracking-widest">Tap arrows to navigate</p>
+        </div>
+    </div>
+
+    <!-- Final Surprise Section -->
+    <div id="final-section" class="hidden text-center animate__animated animate__zoomIn">
+        <h2 class="text-4xl md:text-6xl cursive text-pink-600 mb-6">We Love You, Tashu! ❤️</h2>
+        <p class="text-lg text-gray-600 mb-8">May this year be your best one yet!</p>
+        <div class="grid grid-cols-3 gap-2 md:gap-4 max-w-lg mx-auto">
+             <div class="bg-pink-200 h-24 rounded-lg flex items-center justify-center text-3xl">💖</div>
+             <div class="bg-pink-300 h-24 rounded-lg flex items-center justify-center text-3xl">✨</div>
+             <div class="bg-pink-200 h-24 rounded-lg flex items-center justify-center text-3xl">🌸</div>
+        </div>
+        <button onclick="location.reload()" class="mt-8 text-pink-500 underline">Watch Again</button>
+    </div>
+
+    <script>
+        const friends = [
+            {
+                name: "Arpita",
+                image: "Arpita.jpeg",
+                message: "Happy Birthday Tashu! You've always been the light of our group. Stay shining exactly as you are!"
+            },
+            {
+                name: "Aishorjo",
+                image: "Aishu.png",
+                message: "To my bestie Tashu, thank you for all the late-night talks and endless support. Have the best day ever!"
+            },
+            {
+                name: "Kawsar",
+                image: "Kawsar.jpg",
+                message: "Happy Birthday! Still waiting for that birthday treat, but for now, enjoy your special day to the fullest!"
+            },
+            {
+                name: "Ronok",
+                image: "Ronok.jpg",
+                message: "Wishing you a year filled with adventures and laughter. You deserve all the happiness in the world!"
+            },
+            {
+                name: "Talib",
+                image: "Talib.jpeg",
+                message: "Happy Birthday Tashu! Keep chasing your dreams. We are all so proud of you!"
+            }
+        ];
+
+        let currentFriendIndex = 0;
+        let autoPlayTimer;
+        const music = document.getElementById('bg-music');
+
+        function startSurprise() {
+            const hero = document.getElementById('hero-section');
+            hero.classList.add('animate__fadeOut');
+            
+            // Start Music
+            music.play().catch(e => console.log("Audio play blocked until interaction"));
+            
+            setTimeout(() => {
+                hero.style.display = 'none';
+                document.getElementById('message-container').classList.remove('hidden');
+                createConfetti();
+                displayFriend();
+            }, 800);
+        }
+
+        function displayFriend(direction = 'next') {
+            clearTimeout(autoPlayTimer);
+            
+            const friend = friends[currentFriendIndex];
+            const card = document.getElementById('message-card');
+            const img = document.getElementById('friend-image');
+            const name = document.getElementById('friend-name');
+            const wish = document.getElementById('friend-wish');
+            const progress = document.getElementById('progress-indicator');
+
+            // Animation classes based on direction
+            card.classList.remove('animate__fadeInRight', 'animate__fadeInLeft', 'animate__fadeOutLeft', 'animate__fadeOutRight');
+            void card.offsetWidth; // Trigger reflow
+            
+            const inAnim = direction === 'next' ? 'animate__fadeInRight' : 'animate__fadeInLeft';
+            card.classList.add(inAnim);
+
+            // Update content
+            img.src = friend.image;
+            img.onerror = () => { img.src = `https://ui-avatars.com/api/?name=${friend.name}&background=random`; };
+            name.innerText = `Message from ${friend.name}`;
+            wish.innerText = `"${friend.message}"`;
+
+            // Update progress dots
+            progress.innerHTML = '';
+            friends.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = `h-2 w-2 rounded-full transition-all duration-500 ${i === currentFriendIndex ? 'bg-pink-500 w-6' : 'bg-pink-200'}`;
+                progress.appendChild(dot);
+            });
+
+            // Auto-advance logic
+            autoPlayTimer = setTimeout(() => {
+                if (currentFriendIndex < friends.length - 1) {
+                    nextFriend();
+                } else {
+                    showFinalMessage();
+                }
+            }, 6000); 
+        }
+
+        function nextFriend() {
+            if (currentFriendIndex < friends.length - 1) {
+                currentFriendIndex++;
+                displayFriend('next');
+            } else {
+                showFinalMessage();
+            }
+        }
+
+        function prevFriend() {
+            if (currentFriendIndex > 0) {
+                currentFriendIndex--;
+                displayFriend('prev');
+            }
+        }
+
+        function showFinalMessage() {
+            clearTimeout(autoPlayTimer);
+            document.getElementById('message-container').classList.add('animate__fadeOut');
+            setTimeout(() => {
+                document.getElementById('message-container').style.display = 'none';
+                document.getElementById('final-section').classList.remove('hidden');
+                setInterval(createConfetti, 1000);
+            }, 800);
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = ['#f472b6', '#fbbf24', '#8b5cf6', '#34d399', '#60a5fa'][Math.floor(Math.random() * 5)];
+                confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
